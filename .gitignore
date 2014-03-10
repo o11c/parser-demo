@@ -1,0 +1,4 @@
+*-lex.[ch]pp
+*-parse.[ch]pp
+*.o
+*-main
