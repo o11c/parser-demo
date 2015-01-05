@@ -1,7 +1,7 @@
 /* vim: set filetype=yacc: */
 %define api.pure full
 %locations
-%name-prefix "demo"
+%name-prefix "demo1"
 %param {yyscan_t yyscanner}
 
 %code requires {
@@ -12,7 +12,7 @@ typedef void *yyscan_t;
 #include <cstdio>
 #include <cstring>
 
-#include "demo-lex.hpp"
+#include "demo1-lex.hpp"
 %}
 
 %code {

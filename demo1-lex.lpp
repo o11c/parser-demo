@@ -1,0 +1,62 @@
+/* vim: set filetype=lex: */
+%option noyywrap
+%option prefix="demo1"
+%option reentrant
+%option warn nodefault
+%option stack
+%option bison-bridge bison-locations
+
+%x STRING_ESCAPE
+
+%top {
+// break the cyclic dependency between scanner and parser headers
+typedef union YYSTYPE YYSTYPE;
+typedef struct YYLTYPE YYLTYPE;
+}
+%{
+#include "demo1-parse.hpp"
+%}
+
+/* options to get rid of compiler warnings */
+%option noinput nounput noyy_top_state noyyalloc noyyrealloc noyyfree
+
+%{
+    #include <cstdlib>
+
+    // Hack to get rid of a compiler warning in yy_fatal_error
+    // since %option noyy_fatal_error doesn't (and can't) work.
+    #define fprintf yyscanner, fprintf
+
+    // These are, relatively speaking, not a hack.
+    void *yyalloc(size_t size, yyscan_t yyscanner)
+    {
+        (void) yyscanner;
+        return malloc(size);
+    }
+
+    void *yyrealloc(void *ptr, size_t size, yyscan_t yyscanner)
+    {
+        (void) yyscanner;
+        return realloc(ptr, size);
+    }
+
+    void yyfree(void *ptr, yyscan_t yyscanner)
+    {
+        (void) yyscanner;
+        free(ptr);
+    }
+%}
+
+%%
+
+\n          { return NEWLINE; }
+\\          { yy_push_state(STRING_ESCAPE, yyscanner); }
+.           { yylval->c = yytext[0]; return CHAR; }
+<STRING_ESCAPE>{
+    \\      { yy_pop_state(yyscanner); yylval->c = '\\'; return CHAR; }
+    \n      { yy_pop_state(yyscanner); yylval->c = '\n'; return CHAR; }
+    .       { abort(); }
+}
+
+%%
+/* empty 3rd section */

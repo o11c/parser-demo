@@ -1,6 +1,6 @@
 /* vim: set filetype=lex: */
 %option noyywrap
-%option prefix="demo"
+%option prefix="demo2"
 %option reentrant
 %option warn nodefault
 %option stack
@@ -14,14 +14,14 @@ typedef union YYSTYPE YYSTYPE;
 typedef struct YYLTYPE YYLTYPE;
 }
 %{
-#include "demo-parse.hpp"
+#include "demo2-parse.h"
 %}
 
 /* options to get rid of compiler warnings */
-%option nounput noyy_top_state noyyalloc noyyrealloc noyyfree
+%option noinput nounput noyy_top_state noyyalloc noyyrealloc noyyfree
 
 %{
-    #include <cstdlib>
+    #include <stdlib.h>
 
     // Hack to get rid of a compiler warning in yy_fatal_error
     // since %option noyy_fatal_error doesn't (and can't) work.

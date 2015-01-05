@@ -1,3 +1,5 @@
+*-lex.[ch]
+*-parse.[ch]
 *-lex.[ch]pp
 *-parse.[ch]pp
 *.o
