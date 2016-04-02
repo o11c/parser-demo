@@ -35,7 +35,7 @@ override CXXFLAGS += -std=c++0x
 % : %.cpp.o
 	${CXX} ${LDFLAGS} $^ ${LDLIBS} -o $@
 
-all: demo1-main demo2-main
+all: $(sort $(patsubst %.c,%,$(wildcard *-main.c)) $(patsubst %.cpp,%,$(wildcard *-main.cpp)))
 
 demo1-main: demo1-main.cpp.o demo1-lex.cpp.o demo1-parse.cpp.o
 demo1-main.cpp.o: demo1-main.cpp demo1-lex.hpp demo1-parse.hpp
@@ -47,8 +47,13 @@ demo2-main.c.o: demo2-main.c demo2-lex.h demo2-parse.h
 demo2-lex.c.o: demo2-lex.c demo2-lex.h demo2-parse.h
 demo2-parse.c.o: demo2-parse.c demo2-parse.h demo2-lex.h
 
+demo3-main: demo3-main.cpp.o demo3-lex.cpp.o demo3-parse.cpp.o
+demo3-main.cpp.o: demo3-main.cpp demo3-lex.hpp demo3-parse.hpp
+demo3-lex.cpp.o: demo3-lex.cpp demo3-lex.hpp demo3-parse.hpp
+demo3-parse.cpp.o: demo3-parse.cpp demo3-parse.hpp demo3-lex.hpp
+
 clean:
-	rm -f demo1-main demo2-main *.o
+	rm -f *-main *.o
 distclean: clean
-	rm -f demo1-lex.[ch]pp demo1-parse.[ch]pp
-	rm -f demo2-lex.[ch] demo2-parse.[ch]
+	rm -f *-lex.[ch]pp *-parse.[ch]pp
+	rm -f *-lex.[ch] *-parse.[ch]

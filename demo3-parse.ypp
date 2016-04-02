@@ -1,0 +1,71 @@
+/* vim: set filetype=yacc: */
+%define api.pure full
+%define api.push-pull push
+%locations
+%name-prefix "demo3"
+
+%{
+#include <cstdio>
+#include <cstring>
+%}
+
+%code {
+void yyerror(YYLTYPE *, const char *msg);
+}
+
+%token NEWLINE
+%token <c> CHAR
+
+%type <s> chars
+%type <s> line
+
+%union
+{
+    char c;
+    char *s;
+}
+
+%%
+
+lines
+: line
+{
+    printf("line: %s\n", $1);
+}
+| lines line
+{
+    printf("line: %s\n", $2);
+}
+;
+
+line
+: NEWLINE
+{
+    $$ = strdup("");
+}
+| chars NEWLINE
+;
+
+chars
+: CHAR
+{
+    $$ = (char *)malloc(2);
+    $$[0] = $1;
+    $$[1] = '\0';
+}
+| chars CHAR
+{
+    size_t len = strlen($1);
+    $$ = (char *)realloc($1, len + 2);
+    $$[len] = $2;
+    $$[len + 1] = '\0';
+}
+;
+
+%%
+
+void yyerror(YYLTYPE *, const char *msg)
+{
+    fprintf(stderr, "%s\n", msg);
+    abort();
+}
